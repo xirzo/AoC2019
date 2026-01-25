@@ -1,8 +1,13 @@
-# Fuel required to launch a given module is based on its mass.
-# Specifically, to find the fuel required for a module, 
-# take its mass, divide by three, round down, and subtract 2.
-
 defmodule Aoc do
+
+defp calculate_fuel(mass) do
+  fuel = div(mass, 3) - 2
+  if fuel <= 0 do
+    0
+  else
+    fuel + calculate_fuel fuel
+  end
+end
 
 defp accumulate_fuel_from_file(fd, acc) do
   case IO.read(fd, :line)  do
@@ -14,7 +19,7 @@ defp accumulate_fuel_from_file(fd, acc) do
       :error
     line -> 
       mass = line |> String.trim |> String.to_integer
-      fuel = div(mass, 3) - 2
+      fuel = calculate_fuel mass
       accumulate_fuel_from_file fd, acc + fuel
   end
 end
