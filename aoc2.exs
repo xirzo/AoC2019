@@ -1,0 +1,64 @@
+defmodule Aoc do
+
+defp interpret_inner(nums, i) do
+  # check if out of bounds
+
+  case elem(nums, i) do
+    1 -> 
+      first_operand = elem(nums, (elem nums, i + 1)) 
+      second_operand = elem(nums, (elem nums, i + 2))
+      index = (elem nums, i + 3)
+      #  IO.puts "Add #{first_operand} and #{second_operand} and put to index: #{index}"
+      nums = put_elem nums, index, first_operand + second_operand
+      interpret_inner nums, i + 4
+    2 -> 
+      first_operand = elem(nums, (elem nums, i + 1)) 
+      second_operand = elem(nums, (elem nums, i + 2))
+      index = (elem nums, i + 3)
+      # IO.puts "Multiply #{first_operand} and #{second_operand} and put to index: #{index}"
+      nums = put_elem nums, index, first_operand * second_operand
+      interpret_inner nums, i + 4
+    99 -> 
+      # IO.puts "Halt"
+      elem(nums, 0) |> IO.puts
+      :ok
+  end
+end
+
+  defp interpret(nums) do
+    nums = put_elem nums, 1, 12
+    nums = put_elem nums, 2, 2
+
+    interpret_inner nums, 0
+end
+
+defp process_line(line) do
+  String.split(line, ",")
+  |> Enum.map(&String.trim/1)
+  |> Enum.map(&String.to_integer/1)
+  |> Enum.to_list # :)
+  |> List.to_tuple
+  |> interpret
+end
+
+defp process_file(fd) do
+  case IO.read fd, :line do
+    :eof ->
+      :ok
+    line -> 
+      process_line line
+  end
+end
+
+def interpret_file(path) do
+  case File.open path do
+    {:ok, fd} ->
+      process_file fd
+    {:error, reason} ->
+      IO.puts(:stderr, reason)
+  end
+end
+
+end
+
+Aoc.interpret_file "./input2.txt"
